@@ -76,19 +76,35 @@ exports.post_short_Url = function (url) { return __awaiter(void 0, void 0, void 
         }
     });
 }); };
-exports.find_uri = function (uri) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
-    return [2 /*return*/];
-}); }); };
-var check_url = function (url) {
-    return new Promise(function (resolve, reject) { return dns_1.default.lookup(url, function (error) {
-        if (error) {
-            return resolve(false);
+exports.find_uri = function (_id) { return __awaiter(void 0, void 0, void 0, function () {
+    var get_url, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, mongo_1.urlModel.findById(_id)];
+            case 1:
+                get_url = _a.sent();
+                return [2 /*return*/, { url: get_url === null || get_url === void 0 ? void 0 : get_url.original_url }];
+            case 2:
+                error_2 = _a.sent();
+                return [2 /*return*/, { error: "sorry doesnt exist" }];
+            case 3: return [2 /*return*/];
         }
-        return resolve(true);
-    }); });
+    });
+}); };
+var check_url = function (url) {
+    return new Promise(function (resolve, reject) {
+        return dns_1.default.lookup(url, function (error) {
+            if (error) {
+                return resolve(false);
+            }
+            return resolve(true);
+        });
+    });
 };
 var check_db = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_2;
+    var result, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -101,8 +117,8 @@ var check_db = function (url) { return __awaiter(void 0, void 0, void 0, functio
                 }
                 return [2 /*return*/, false];
             case 2:
-                error_2 = _a.sent();
-                console.log(error_2.message);
+                error_3 = _a.sent();
+                console.log(error_3.message);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

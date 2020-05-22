@@ -6,4 +6,9 @@ const urlschema = new mongoose.Schema({
   original_url: String,
 });
 
-export const urlModel = mongoose.model("URLMODEL", urlschema);
+interface typing extends mongoose.Document {
+  _id: String;
+  original_url: String;
+}
+
+export const urlModel = mongoose.model<typing>("URLMODEL", urlschema);

@@ -1,7 +1,6 @@
 import dns from "dns";
 import { urlModel } from "../models/mongo";
 
-
 export const post_short_Url = async (url: string) => {
   const reg: RegExp = /[^http://|https://].+/;
   const uri: RegExpMatchArray | null = url.match(reg);
@@ -24,17 +23,25 @@ export const post_short_Url = async (url: string) => {
   }
 };
 
-export const find_uri = async (uri: string) => { };
+export const find_uri = async (_id: string) => {
+  try {
+    const get_url = await urlModel.findById(_id);
+    return { url: get_url?.original_url };
+  } catch (error) {
+    return { error: "sorry doesnt exist" };
+  }
+};
 
-
-const check_url =  (url: string) => {
-  return new Promise((resolve, reject) => dns.lookup(url, (error) => {
-    if (error) {
-      return resolve(false)
-    }
-    return resolve(true)
-  }))
-}
+const check_url = (url: string) => {
+  return new Promise((resolve, reject) =>
+    dns.lookup(url, (error) => {
+      if (error) {
+        return resolve(false);
+      }
+      return resolve(true);
+    })
+  );
+};
 
 const check_db = async (url: string) => {
   try {

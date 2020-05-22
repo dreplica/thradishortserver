@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.post_url = void 0;
+exports.get_url = exports.post_url = void 0;
 var express_1 = __importDefault(require("express"));
 var requests_1 = require("../controllers/requests");
 var router = express_1.default.Router();
@@ -60,6 +60,24 @@ exports.post_url = router.post("/shorten", function (req, res) { return __awaite
                 error_1 = _a.sent();
                 return [2 /*return*/, res.status(500).json({ error: "server error" })];
             case 4: return [2 /*return*/];
+        }
+    });
+}); });
+exports.get_url = router.get("/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params["id"];
+                return [4 /*yield*/, requests_1.find_uri(id)];
+            case 1:
+                result = _a.sent();
+                if (!result.error) {
+                    console.log(result);
+                    res.redirect("http://" + result.url);
+                    return [2 /*return*/];
+                }
+                return [2 /*return*/, res.status(404).json(result)];
         }
     });
 }); });
