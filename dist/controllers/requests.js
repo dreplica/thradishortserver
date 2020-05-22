@@ -39,12 +39,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.find_uri = exports.post_short_Url = void 0;
 var dns_1 = __importDefault(require("dns"));
 var mongo_1 = require("../models/mongo");
-var check_url = function (url) { return dns_1.default.lookup(url, function (err) {
-    if (err)
-        return false;
-    return true;
+var check_url = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+    var result;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                result = false;
+                return [4 /*yield*/, dns_1.default.lookup(url, function (err) {
+                        if (err)
+                            result = false;
+                        result = true;
+                    })];
+            case 1:
+                _a.sent();
+                return [4 /*yield*/, result];
+            case 2: return [2 /*return*/, _a.sent()];
+        }
+    });
 }); };
 var check_db = function (url) { return __awaiter(void 0, void 0, void 0, function () {
     var result, error_1;
@@ -56,7 +70,7 @@ var check_db = function (url) { return __awaiter(void 0, void 0, void 0, functio
             case 1:
                 result = _a.sent();
                 if (result) {
-                    return [2 /*return*/, true];
+                    return [2 /*return*/, result];
                 }
                 return [2 /*return*/, false];
             case 2:
@@ -67,21 +81,52 @@ var check_db = function (url) { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); };
-var post_short_Url = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var uri, okay_url;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+exports.post_short_Url = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+    var reg, uri, okay_url, _a, db_check, _b, url_saving, error_2;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                uri = url.match(/[^http://|https://].+/);
-                return [4 /*yield*/, check_url(url)];
+                reg = /[^http://|https://].+/;
+                uri = url.match(reg);
+                _c.label = 1;
             case 1:
-                okay_url = _a.sent();
-                try {
+                _c.trys.push([1, 6, , 7]);
+                _a = uri;
+                if (!_a) return [3 /*break*/, 3];
+                return [4 /*yield*/, check_url(uri[0])];
+            case 2:
+                _a = (_c.sent());
+                _c.label = 3;
+            case 3:
+                okay_url = _a;
+                if (!okay_url) {
+                    return [2 /*return*/, { error: "please check your link" }];
                 }
-                catch (error) {
+                _b = uri;
+                if (!_b) return [3 /*break*/, 5];
+                return [4 /*yield*/, check_db(uri[0])];
+            case 4:
+                _b = (_c.sent());
+                _c.label = 5;
+            case 5:
+                db_check = _b;
+                if (db_check) {
+                    return [2 /*return*/, { url: db_check._id }];
                 }
-                return [2 /*return*/];
+                url_saving = new mongo_1.urlModel({ original_url: uri });
+                url_saving.save();
+                return [2 /*return*/, { url: url_saving._id }];
+            case 6:
+                error_2 = _c.sent();
+                console.log(error_2.message);
+                return [2 /*return*/, { error: "please check your input and try again" }];
+            case 7: return [2 /*return*/];
         }
+    });
+}); };
+exports.find_uri = function (uri) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/];
     });
 }); };
 //# sourceMappingURL=requests.js.map

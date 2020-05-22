@@ -1,11 +1,16 @@
-import express from "express";
-var router = express.Router();
+import express, { Request, Response } from "express";
+import { post_short_Url } from "../controllers/requests";
 
-/* GET users listing. */
-const usersRouter = router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
+const router = express.Router();
+
+const usersRouter = router.post("/shorten", async (req:Request, res:Response) {
+  const url = req.body['url'] as string
+try {
+  const result = await post_short_Url(url)
+  return res.status(200).json(result)
+  
+} catch (error) {
+  return res.status(500).json({error:"server error"})
+}
+
 });
-
-export default {
-  usersRouter,
-};
