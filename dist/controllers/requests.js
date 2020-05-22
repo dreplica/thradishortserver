@@ -42,31 +42,58 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.find_uri = exports.post_short_Url = void 0;
 var dns_1 = __importDefault(require("dns"));
 var mongo_1 = require("../models/mongo");
-var check_url = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var result;
+exports.post_short_Url = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+    var reg, uri, okay_url, db_check, url_saving, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                result = false;
-                return [4 /*yield*/, dns_1.default.lookup(url, function (err) {
-                        if (err)
-                            result = false;
-                        result = true;
-                    })];
+                reg = /[^http://|https://].+/;
+                uri = url.match(reg);
+                _a.label = 1;
             case 1:
-                _a.sent();
-                return [4 /*yield*/, result];
-            case 2: return [2 /*return*/, _a.sent()];
+                _a.trys.push([1, 5, , 6]);
+                if (!uri) return [3 /*break*/, 4];
+                return [4 /*yield*/, check_url(uri[0])];
+            case 2:
+                okay_url = _a.sent();
+                if (!okay_url) {
+                    return [2 /*return*/, { error: "please check your link" }];
+                }
+                return [4 /*yield*/, check_db(uri[0])];
+            case 3:
+                db_check = _a.sent();
+                if (db_check) {
+                    return [2 /*return*/, { url: db_check._id }];
+                }
+                url_saving = new mongo_1.urlModel({ original_url: uri[0] });
+                url_saving.save();
+                return [2 /*return*/, { url: url_saving._id }];
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                error_1 = _a.sent();
+                return [2 /*return*/, { error: "please check your input and try again" }];
+            case 6: return [2 /*return*/];
         }
     });
 }); };
+exports.find_uri = function (uri) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    return [2 /*return*/];
+}); }); };
+var check_url = function (url) {
+    return new Promise(function (resolve, reject) { return dns_1.default.lookup(url, function (error) {
+        if (error) {
+            return resolve(false);
+        }
+        return resolve(true);
+    }); });
+};
 var check_db = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_1;
+    var result, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, mongo_1.urlModel.findOne({ "origina_url": url })];
+                return [4 /*yield*/, mongo_1.urlModel.findOne({ origina_url: url })];
             case 1:
                 result = _a.sent();
                 if (result) {
@@ -74,59 +101,11 @@ var check_db = function (url) { return __awaiter(void 0, void 0, void 0, functio
                 }
                 return [2 /*return*/, false];
             case 2:
-                error_1 = _a.sent();
-                console.log(error_1.message);
+                error_2 = _a.sent();
+                console.log(error_2.message);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
-    });
-}); };
-exports.post_short_Url = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var reg, uri, okay_url, _a, db_check, _b, url_saving, error_2;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                reg = /[^http://|https://].+/;
-                uri = url.match(reg);
-                _c.label = 1;
-            case 1:
-                _c.trys.push([1, 6, , 7]);
-                _a = uri;
-                if (!_a) return [3 /*break*/, 3];
-                return [4 /*yield*/, check_url(uri[0])];
-            case 2:
-                _a = (_c.sent());
-                _c.label = 3;
-            case 3:
-                okay_url = _a;
-                if (!okay_url) {
-                    return [2 /*return*/, { error: "please check your link" }];
-                }
-                _b = uri;
-                if (!_b) return [3 /*break*/, 5];
-                return [4 /*yield*/, check_db(uri[0])];
-            case 4:
-                _b = (_c.sent());
-                _c.label = 5;
-            case 5:
-                db_check = _b;
-                if (db_check) {
-                    return [2 /*return*/, { url: db_check._id }];
-                }
-                url_saving = new mongo_1.urlModel({ original_url: uri });
-                url_saving.save();
-                return [2 /*return*/, { url: url_saving._id }];
-            case 6:
-                error_2 = _c.sent();
-                console.log(error_2.message);
-                return [2 /*return*/, { error: "please check your input and try again" }];
-            case 7: return [2 /*return*/];
-        }
-    });
-}); };
-exports.find_uri = function (uri) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/];
     });
 }); };
 //# sourceMappingURL=requests.js.map

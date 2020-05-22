@@ -39,15 +39,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.post_url = void 0;
 var express_1 = __importDefault(require("express"));
 var requests_1 = require("../controllers/requests");
 var router = express_1.default.Router();
-var usersRouter = router.post("/shorten", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+exports.post_url = router.post("/shorten", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var url, result, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                url = req.body['url'];
+                url = req.body["url"];
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);

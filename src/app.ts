@@ -1,13 +1,12 @@
-import createError from "http-errors";
-import express from "express";
+import createError, { HttpError } from "http-errors";
+import express, { Request, Response, NextFunction } from "express";
 import logger from "morgan";
 import cors from "cors";
 import path from "path";
 
-import indexRouter  from "./routes/index";
-import usersRouter  from "./routes/users";
+import { post_url } from "./routes/users";
 
-var app = express();
+const app = express();
 
 app.use(cors());
 app.use(logger("dev"));
@@ -15,8 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter.indexRouter);
-app.use("/users", usersRouter.usersRouter);
+app.use("/", post_url);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -24,7 +22,12 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (
+  err: HttpError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
