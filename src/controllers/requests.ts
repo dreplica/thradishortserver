@@ -45,8 +45,13 @@ const check_url = (url: string) => {
 
 const check_db = async (url: string) => {
   try {
+    console.log("url");
+    const reg = new RegExp(url, "i");
+    console.log(reg);
     const result = await urlModel.findOne({ origina_url: url });
+    console.log(result?.original_url);
     if (result) {
+      console.log("url already exist");
       return result;
     }
     return false;

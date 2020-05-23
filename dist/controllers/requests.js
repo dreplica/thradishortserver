@@ -104,15 +104,20 @@ var check_url = function (url) {
     });
 };
 var check_db = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, error_3;
+    var reg, result, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
+                console.log("url");
+                reg = new RegExp(url, "i");
+                console.log(reg);
                 return [4 /*yield*/, mongo_1.urlModel.findOne({ origina_url: url })];
             case 1:
                 result = _a.sent();
+                console.log(result === null || result === void 0 ? void 0 : result.original_url);
                 if (result) {
+                    console.log("url already exist");
                     return [2 /*return*/, result];
                 }
                 return [2 /*return*/, false];

@@ -22,10 +22,10 @@ export const get_url = router.get(
     const id = req.params["id"];
     const result = await find_uri(id);
     if (!result.error) {
-      console.log(result)
-       res.redirect(`http://${result.url as string}`);
-       return
+      console.log(result);
+      res.redirect(`http://${result.url as string}`);
+      return;
     }
-     return res.status(404).json(result);
+    return res.status(404).json(result);
   }
 );
