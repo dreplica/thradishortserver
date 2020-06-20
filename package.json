@@ -23,6 +23,7 @@
     "mongodb": "^3.5.7",
     "mongoose": "^5.9.15",
     "morgan": "~1.9.1",
+    "pm2": "^4.4.0",
     "shortid": "^2.2.15"
   },
   "devDependencies": {
