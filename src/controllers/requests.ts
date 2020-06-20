@@ -2,19 +2,19 @@ import dns from "dns";
 import { urlModel } from "../models/mongo";
 
 export const post_short_Url = async (url: string) => {
-  const reg: RegExp = /[^http://|https://].+/;
-  const uri: RegExpMatchArray | null = url.match(reg);
+  const cut: number = url.lastIndexOf('/');
+  const uri: string | null = cut > 0?url.substr(cut+1):url;
   try {
     if (uri) {
-      const okay_url = await check_url(uri[0]);
+      const okay_url = await check_url(uri);
       if (!okay_url) {
         return { error: "please check your link" };
       }
-      const db_check = await check_db(uri[0]);
+      const db_check = await check_db(uri);
       if (db_check) {
         return { url: db_check._id };
       }
-      const url_saving = new urlModel({ original_url: uri[0] as string });
+      const url_saving = new urlModel({ original_url: uri });
       url_saving.save();
       return { url: url_saving._id };
     }
@@ -22,6 +22,7 @@ export const post_short_Url = async (url: string) => {
     return { error: "please check your input and try again" };
   }
 };
+
 
 export const find_uri = async (_id: string) => {
   try {
@@ -31,6 +32,7 @@ export const find_uri = async (_id: string) => {
     return { error: "sorry doesnt exist" };
   }
 };
+
 
 const check_url = (url: string) => {
   return new Promise((resolve, reject) =>
@@ -43,16 +45,13 @@ const check_url = (url: string) => {
   );
 };
 
+
 const check_db = async (url: string) => {
   try {
-    console.log("url");
-    const reg = new RegExp(url, "i");
-    console.log(reg);
-    const result = await urlModel.findOne({ origina_url: url });
-    console.log(result?.original_url);
-    if (result) {
-      console.log("url already exist");
-      return result;
+    const result = await urlModel.find({ original_url:{$regex:url}});
+    if (result.length) {
+      // console.log("url already exist");
+      return result[0];
     }
     return false;
   } catch (error) {

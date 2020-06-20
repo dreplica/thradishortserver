@@ -43,29 +43,29 @@ exports.find_uri = exports.post_short_Url = void 0;
 var dns_1 = __importDefault(require("dns"));
 var mongo_1 = require("../models/mongo");
 exports.post_short_Url = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var reg, uri, okay_url, db_check, url_saving, error_1;
+    var cut, uri, okay_url, db_check, url_saving, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                reg = /[^http://|https://].+/;
-                uri = url.match(reg);
+                cut = url.lastIndexOf('/');
+                uri = cut > 0 ? url.substr(cut + 1) : url;
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 5, , 6]);
                 if (!uri) return [3 /*break*/, 4];
-                return [4 /*yield*/, check_url(uri[0])];
+                return [4 /*yield*/, check_url(uri)];
             case 2:
                 okay_url = _a.sent();
                 if (!okay_url) {
                     return [2 /*return*/, { error: "please check your link" }];
                 }
-                return [4 /*yield*/, check_db(uri[0])];
+                return [4 /*yield*/, check_db(uri)];
             case 3:
                 db_check = _a.sent();
                 if (db_check) {
                     return [2 /*return*/, { url: db_check._id }];
                 }
-                url_saving = new mongo_1.urlModel({ original_url: uri[0] });
+                url_saving = new mongo_1.urlModel({ original_url: uri });
                 url_saving.save();
                 return [2 /*return*/, { url: url_saving._id }];
             case 4: return [3 /*break*/, 6];
@@ -104,21 +104,17 @@ var check_url = function (url) {
     });
 };
 var check_db = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var reg, result, error_3;
+    var result, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                console.log("url");
-                reg = new RegExp(url, "i");
-                console.log(reg);
-                return [4 /*yield*/, mongo_1.urlModel.findOne({ origina_url: url })];
+                return [4 /*yield*/, mongo_1.urlModel.find({ original_url: { $regex: url } })];
             case 1:
                 result = _a.sent();
-                console.log(result === null || result === void 0 ? void 0 : result.original_url);
-                if (result) {
-                    console.log("url already exist");
-                    return [2 /*return*/, result];
+                if (result.length) {
+                    // console.log("url already exist");
+                    return [2 /*return*/, result[0]];
                 }
                 return [2 /*return*/, false];
             case 2:
